@@ -10,5 +10,5 @@ import com.org.rating.entity.Rating;
 public interface RatingRepo extends MongoRepository<Rating, String> {
 	
 	List<Rating> findByUserId(Integer userId);
-	List<Rating> findByHotelId(String hotelId);
+	List<Rating> findByHotelId(Integer hotelId);
 }

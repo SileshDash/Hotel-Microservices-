@@ -8,21 +8,6 @@ class RatingseviceApplicationTests {
 
 	@Test
 	void contextLoads() {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
 	}
 
 }

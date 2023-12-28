@@ -1,14 +1,18 @@
 package com.org.user.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.aspectj.weaver.patterns.ThisOrTargetAnnotationPointcut;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.org.user.entity.User;
 import com.org.user.exception.ResourceNotFoundException;
@@ -21,6 +25,8 @@ public class UserServiceImpl implements UserService{
 	private ModelMapper modelMapper;
 	@Autowired
 	private UserRepo userRepo;
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Override
 	public UserDto createUser(UserDto userDto) {
@@ -32,8 +38,17 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<UserDto> getAllUser() {
 		List<User> users = this.userRepo.findAll();
-		List<UserDto> dtos = users.stream().map(user->this.userToUserDto(user)).collect(Collectors.toList());
-		return dtos;
+		 List<UserDto> userDtos = new ArrayList<>();
+		    for (User user : users) {
+		        // Fetch ratings for each user individually
+		        ArrayList rating = restTemplate.getForObject("http://localhost:8081/api/rating/user/" +user.getUserId(),ArrayList.class);
+		        UserDto userDto = userToUserDto(user);
+		        userDto.setRatings(rating);
+		        userDtos.add(userDto);
+		    }
+		
+		//List<UserDto> dtos = users.stream().map(user->this.userToUserDto(user)).collect(Collectors.toList());
+		return userDtos;
 	}
 
 	public UserDto userToUserDto(User user) {
@@ -48,7 +63,10 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public UserDto getUserById(Integer userId) {
 		User user=this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("user", "id", userId));
-		return this.modelMapper.map(user, UserDto.class);
+		ArrayList rating = restTemplate.getForObject("http://localhost:8081/api/rating/user/"+user.getUserId(), ArrayList.class);
+			UserDto userdto = this.modelMapper.map(user, UserDto.class);
+			userdto.setRatings(rating);
+			return userdto;
 	}
 
 

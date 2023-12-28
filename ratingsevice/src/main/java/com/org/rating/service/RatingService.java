@@ -8,6 +8,6 @@ public interface RatingService {
 	Rating createRating(Rating rating);
 	List<Rating> getAllRatings();
 	List<Rating> getRatingsByUserId(Integer userId);
-	List<Rating> getratingByHotelId(String hotelId);
+	List<Rating> getRatingByHotelId(Integer hotelId);
 	
 }

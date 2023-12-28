@@ -28,7 +28,7 @@ public class RatingServiceImpl implements RatingService {
 	
 
 	@Override
-	public List<Rating> getratingByHotelId(String hotelId) {
+	public List<Rating> getRatingByHotelId(Integer hotelId) {
 		
 		return ratingRepo.findByHotelId(hotelId);
 	}
